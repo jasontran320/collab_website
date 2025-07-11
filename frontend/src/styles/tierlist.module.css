@@ -1,0 +1,372 @@
+/* Main container styles */
+.main {
+  background: #f9f9f9;
+  position: relative;
+  padding-top: 1rem;
+}
+
+.sessionJoinContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.sessionJoinContainer h1 {
+  text-align: center;
+  color: #333;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+/* Section styles */
+.sessionSection {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.sessionSection h3 {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Form styles */
+.createForm,
+.joinForm {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+}
+
+.createForm input,
+.joinForm input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.createForm input:focus,
+.joinForm input:focus {
+  outline: none;
+  border-color: #2196f3;
+}
+
+/* Button styles */
+.primaryBtn {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  background-color: #1976d2;
+}
+
+.primaryBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.secondaryBtn {
+  background-color: #666;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.secondaryBtn:hover {
+  background-color: #555;
+}
+
+/* Help text */
+.helpText {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Session list styles */
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sessionCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: border-color 0.2s;
+}
+
+.sessionCard:hover {
+  border-color: #2196f3;
+}
+
+.sessionInfo {
+  flex: 1;
+}
+
+.sessionInfo h4 {
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+
+.sessionMeta {
+  color: #666;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.sessionActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Instructions styles */
+.instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.instruction {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.stepNumber {
+  background-color: #2196f3;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.instruction div {
+  flex: 1;
+}
+
+.instruction strong {
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.instruction p {
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Error message */
+.errorMessage {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ffcdd2;
+  font-weight: 500;
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.emptyState h2 {
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.emptyState p {
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main {
+    padding: 0.5rem;
+  }
+  
+  .sessionJoinContainer {
+    padding: 15px;
+  }
+  
+  .sessionJoinContainer h1 {
+    font-size: 2rem;
+  }
+  
+  .createForm,
+  .joinForm {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .createForm input,
+  .joinForm input {
+    min-width: auto;
+  }
+  
+  .sessionCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .sessionActions {
+    align-self: stretch;
+    justify-content: flex-end;
+  }
+  
+  .instruction {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sessionSection {
+    padding: 15px;
+  }
+  
+  .createForm,
+  .joinForm {
+    padding: 10px;
+  }
+  
+  .sessionActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Add this to your tierlist.module.css */
+
+.dangerBtn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+}
+
+.dangerBtn:hover {
+  background: #ff3742;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.dangerBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(255, 71, 87, 0.2);
+}
+
+.dangerBtn:disabled {
+  background: #ffb3ba;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.dangerBtn:disabled:hover {
+  background: #ffb3ba;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Optional: Add a confirmation style for destructive actions */
+.dangerBtn.confirm {
+  background: #ff1744;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 23, 68, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 23, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 23, 68, 0); }
+}
+
+/* Ensure proper spacing in session actions */
+.sessionActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sessionActions .dangerBtn {
+  margin-left: auto; /* Push delete button to the right */
+}
+
+.redirectMessage {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #856404;
+}
