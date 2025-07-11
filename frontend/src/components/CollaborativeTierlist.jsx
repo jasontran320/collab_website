@@ -1237,26 +1237,33 @@ const getCollaboratorTertiaryColor = (tierId) => {
 // Generate styling for multiple collaborators
 const getMultiCollaboratorStyle = (tierId) => {
   const hoveringUsers = getCollaboratorsHoveringOverTier(tierId);
- 
+  
   if (hoveringUsers.length === 0) return undefined;
- 
+  
   if (hoveringUsers.length === 1) {
     return {
       backgroundColor: getSecondaryColorForUid(hoveringUsers[0][0]),
       borderColor: getColorForUid(hoveringUsers[0][0])
     };
   }
- 
-  // Multiple users - use layered box-shadow for multi-colored borders
-  const borderColors = hoveringUsers.map(([uid]) => getColorForUid(uid));
-  const shadowLayers = borderColors.map((color, index) => 
-    `0 0 0 ${2 + index}px ${color}`
-  ).join(', ');
+  
+  // Animated border that cycles through colors
+  const colors = hoveringUsers.map(([uid]) => getColorForUid(uid));
+  const keyframes = colors.map((color, index) => 
+    `${(index * 100) / colors.length}% { border-color: ${color}; }`
+  ).join(' ');
   
   return {
     backgroundColor: getSecondaryColorForUid(hoveringUsers[0][0]),
-    boxShadow: shadowLayers,
-    border: 'none'
+    borderColor: colors[0],
+    borderWidth: '3px',
+    borderStyle: 'solid',
+    animation: `collaborator-cycle-${tierId} 2s infinite`,
+    '@keyframes': `
+      @keyframes collaborator-cycle-${tierId} {
+        ${keyframes}
+      }
+    `
   };
 };
 
