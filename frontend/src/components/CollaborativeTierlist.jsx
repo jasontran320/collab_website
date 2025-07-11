@@ -1216,7 +1216,6 @@ const renderCursor = (cursor, uid, color = '#3498db') => {
   const stopMouseTracking = () => {
     return (showItemModal || showTierModal)
   }
-
 // Get the primary collaborator color for a tier (first user hovering)
 const getPrimaryCollaboratorColor = (tierId) => {
   const hoveringUsers = getCollaboratorsHoveringOverTier(tierId);
@@ -1235,28 +1234,29 @@ const getCollaboratorTertiaryColor = (tierId) => {
   return hoveringUsers.length > 0 ? getTertiaryColorForUid(hoveringUsers[0][0]) : null;
 };
 
-// Generate gradient background for multiple collaborators
+// Generate styling for multiple collaborators
 const getMultiCollaboratorStyle = (tierId) => {
   const hoveringUsers = getCollaboratorsHoveringOverTier(tierId);
-  
+ 
   if (hoveringUsers.length === 0) return undefined;
-  
+ 
   if (hoveringUsers.length === 1) {
     return {
       backgroundColor: getSecondaryColorForUid(hoveringUsers[0][0]),
       borderColor: getColorForUid(hoveringUsers[0][0])
     };
   }
-  
-  // Multiple users - create gradient
-  const colors = hoveringUsers.map(([uid]) => getSecondaryColorForUid(uid));
+ 
+  // Multiple users - use layered box-shadow for multi-colored borders
   const borderColors = hoveringUsers.map(([uid]) => getColorForUid(uid));
+  const shadowLayers = borderColors.map((color, index) => 
+    `0 0 0 ${2 + index}px ${color}`
+  ).join(', ');
   
   return {
-    background: `linear-gradient(45deg, ${colors.join(', ')})`,
-    borderColor: borderColors[0], // Use first user's color for border
-    borderWidth: '2px',
-    borderStyle: 'solid'
+    backgroundColor: getSecondaryColorForUid(hoveringUsers[0][0]),
+    boxShadow: shadowLayers,
+    border: 'none'
   };
 };
 
@@ -1393,23 +1393,32 @@ const getMultiCollaboratorStyle = (tierId) => {
             alignItems: 'center', 
             marginLeft: '8px' 
           }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: 5,
+              left: 5,
+              display: 'flex',
+              flexWrap: 'wrap',
+              width: '60px', // Adjust based on your needs - allows ~6 dots per row
+              gap: '2px'
+            }}
+          >
             {getCollaboratorsHoveringOverTier(tier.id).map(([uid, state]) => (
               <div
                 key={uid}
                 style={{
-                  position: 'absolute',
-                    top: 5,
-                    left: 5,
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: getColorForUid(uid),
-                    marginRight: '2px',
-                    border: '1px solid white'
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: getColorForUid(uid),
+                  border: '1px solid white',
+                  flexShrink: 0
                 }}
                 title={`${activeUsers[uid]?.displayName} is hovering`}
               />
             ))}
+          </div>
           </div>
         )}
           <span>{tier.name}</span>
