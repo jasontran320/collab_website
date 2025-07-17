@@ -295,13 +295,32 @@ const handleMouseMove = (e) => {
   };
 
   // Generate AI image
-  const generateAIImage = async (itemName) => {
-    setIsGeneratingImage(true);
-    broadcastAction('generating_image', { itemName });
+  // Debug version of your original function
+// Generate AI image with simple fallback strategy
+const generateAIImage = async (itemName) => {
+  setIsGeneratingImage(true);
+  broadcastAction('generating_image', { itemName });
+ 
+  try {
     
-    try {
-      const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(itemName)}&per_page=1&orientation=square`,
+    // Try original search first
+    let response = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(itemName)}&per_page=1`,
+      {
+        headers: {
+          'Authorization': 'EVQNwZ9kvktkN3HDgdBbQG5QIZdv5wbhMhhZYnSt0n1lkkyE6yeHYez5'
+        }
+      }
+    );
+   
+    let data = await response.json();
+    
+    // If no results, try one simple fallback term
+    if (!data.photos || data.photos.length === 0) {
+      const fallbackTerm = itemName.split(' ')[0]; // Just use first word
+      
+      response = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(fallbackTerm)}&per_page=1`,
         {
           headers: {
             'Authorization': 'EVQNwZ9kvktkN3HDgdBbQG5QIZdv5wbhMhhZYnSt0n1lkkyE6yeHYez5'
@@ -309,30 +328,33 @@ const handleMouseMove = (e) => {
         }
       );
       
-      const data = await response.json();
-      if (data.photos && data.photos.length > 0) {
-        setItemForm(prev => ({ 
-          ...prev, 
-          image: data.photos[0].src.medium 
-        }));
-      } else {
-        const seed = itemName.toLowerCase().replace(/\s+/g, '-');
-        const fallbackUrl = `https://dummyimage.com/100x100/000000/ffffff.jpg&text=${encodeURIComponent(
-          seed || "NA"
-        )}`;
-        setItemForm(prev => ({ ...prev, image: fallbackUrl }));
-      }
-    } catch (error) {
-      console.error('Failed to generate image:', error);
+      data = await response.json();
+    }
+    
+    if (data.photos && data.photos.length > 0) {
+      setItemForm(prev => ({
+        ...prev,
+        image: data.photos[0].src.medium
+      }));
+    } else {
+      // Use fallback image
       const seed = itemName.toLowerCase().replace(/\s+/g, '-');
       const fallbackUrl = `https://dummyimage.com/100x100/000000/ffffff.jpg&text=${encodeURIComponent(
-          seed || "NA"
-        )}`;
+        seed || "NA"
+      )}`;
       setItemForm(prev => ({ ...prev, image: fallbackUrl }));
-    } finally {
-      setIsGeneratingImage(false);
     }
-  };
+  } catch (error) {
+    console.error('Failed to generate image:', error);
+    const seed = itemName.toLowerCase().replace(/\s+/g, '-');
+    const fallbackUrl = `https://dummyimage.com/100x100/000000/ffffff.jpg&text=${encodeURIComponent(
+        seed || "NA"
+      )}`;
+    setItemForm(prev => ({ ...prev, image: fallbackUrl }));
+  } finally {
+    setIsGeneratingImage(false);
+  }
+};
 
   // Update tier list name
   const updateTierListName = (newName) => {
@@ -1663,54 +1685,102 @@ const getMultiCollaboratorStyle = (tierId) => {
         </div>
       </div>
       {/* Item Modal */}
-      {showItemModal && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <h3>{editingItem ? 'Edit Item' : 'Add Item'}</h3>
-            <input
-              type="text"
-              placeholder="Item name..."
-              value={itemForm.name}
-              onChange={(e) => setItemForm(prev => ({ ...prev, name: e.target.value }))}
-            />
-            <textarea
-              placeholder="Description (optional)..."
-              value={itemForm.description}
-              onChange={(e) => setItemForm(prev => ({ ...prev, description: e.target.value }))}
-            />
-            <input
-              type="url"
-              placeholder="Image URL (optional)..."
-              value={itemForm.image}
-              onChange={(e) => setItemForm(prev => ({ ...prev, image: e.target.value }))}
-            />
-            <button 
-              onClick={() => generateAIImage(itemForm.name)}
-              disabled={!itemForm.name || isGeneratingImage}
-              className={styles.aiBtn}
-            >
-              {isGeneratingImage ? 'Generating...' : 'Generate Image'}
-            </button>
-            <div className={styles.modalActions2}>
-              {editingItem ? <button className={styles.deleteBtn2} onClick={() => {deleteItem(editingItem);}}>Delete</button> : <div style={{ width: 0, height: 0, visibility: 'hidden' }} />}
-              <div className={styles.modalActions}>
-                <button onClick={saveItem} className={styles.primaryBtn}>Save</button>
-                <button onClick={() => {
-                    if (editingItem) {
-                      broadcastEditState(editingItem.id, false, 'item');
-                    } else {
-                      broadcastEditState('add-item-modal', false, 'modal');
-                    }
-                    setShowItemModal(false);
-                    setEditingItem(null);
-                    setItemForm({ name: '', description: '', image: '' });
-                  }} className={styles.cancelBtn}>Cancel
-                </button>
-              </div>
-            </div>
-          </div>
+{showItemModal && (
+  <div className={styles.modal}>
+    <div className={styles.modalContent}>
+      <h3>{editingItem ? 'Edit Item' : 'Add Item'}</h3>
+      <input
+        type="text"
+        placeholder="Item name..."
+        value={itemForm.name}
+        onChange={(e) => setItemForm(prev => ({ ...prev, name: e.target.value }))}
+      />
+      <textarea
+        placeholder="Description (optional)..."
+        value={itemForm.description}
+        onChange={(e) => setItemForm(prev => ({ ...prev, description: e.target.value }))}
+      />
+      
+      {/* Image Section */}
+      <div className={styles.imageSection}>
+        <label className={styles.imageLabel}>Item Image (Optional)</label>
+        
+        {/* Image Preview */}
+
+        
+        {/* Image Input Options */}
+        <div className={styles.imageOptions}>
+          <button
+            type="button"
+            onClick={() => generateAIImage(itemForm.name)}
+            disabled={!itemForm.name || isGeneratingImage}
+            className={`${styles.aiBtn} ${itemForm.image ? styles.regenerateBtn : ''}`}
+          >
+            {isGeneratingImage ? (
+              <>
+                <span className={styles.spinner}></span>
+                Generating...
+              </>
+            ) : (
+              itemForm.image ? 'Generate New Image' : 'Generate AI Image'
+            )}
+          </button>
         </div>
-      )}
+        {itemForm.image && (
+          <div className={styles.imagePreview}>
+            <img 
+              src={itemForm.image} 
+              alt="Item preview" 
+              className={styles.previewImage}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+            <div className={styles.imageError} style={{ display: 'none' }}>
+              Invalid image URL
+            </div>
+            <button 
+              type="button"
+              onClick={() => setItemForm(prev => ({ ...prev, image: '' }))}
+              className={styles.removeImageBtn}
+              title="Remove image"
+            >
+              ×
+            </button>
+          </div>
+        )}
+      </div>
+      
+      <div className={styles.modalActions2}>
+        {editingItem ? (
+          <button 
+            className={styles.deleteBtn2} 
+            onClick={() => {deleteItem(editingItem);}}
+          >
+            Delete
+          </button>
+        ) : (
+          <div style={{ width: 0, height: 0, visibility: 'hidden' }} />
+        )}
+        <div className={styles.modalActions}>
+          <button onClick={saveItem} className={styles.primaryBtn}>Save</button>
+          <button onClick={() => {
+              if (editingItem) {
+                broadcastEditState(editingItem.id, false, 'item');
+              } else {
+                broadcastEditState('add-item-modal', false, 'modal');
+              }
+              setShowItemModal(false);
+              setEditingItem(null);
+              setItemForm({ name: '', description: '', image: '' });
+            }} className={styles.cancelBtn}>Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Tier Modal */}
       {showTierModal && (
